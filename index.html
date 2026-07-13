@@ -229,7 +229,13 @@ function render(scroll=true) {
         <div class="dbody"><div class="sub" style="padding:6px 0">${LIFTS[k].s}</div>${
           LIFTS[k].i.map(([n,s,w])=>`<div class="liftrow"><span class="n">${n}</span><span class="s mono">${s}${w?` · ${w}`:""}</span></div>`).join("")
         }</div></details>`).join("") +
-      `<div class="note" style="text-align:center">Sat = calisthenics (Today/Log tabs on Saturdays)</div>`;
+      `<details open><summary><span><span class="mono" style="font-size:10px;color:var(--a);font-weight:700;margin-right:10px">SAT</span>
+        <span style="font-size:14px;font-weight:600">Calisthenics</span></span>
+        <span class="mono" style="font-size:10px;color:var(--dim)">WK ${wk}</span></summary>
+        <div class="dbody"><div class="sub" style="padding:6px 0">Skills first, always · progression changes weekly</div>${
+          week.c.split(" · ").map(x => `<div class="liftrow"><span class="n">${x}</span></div>`).join("")
+        }</div></details>` +
+      `<div class="note" style="text-align:center">Sat plan is week-specific — switch weeks above to see its progression</div>`;
   }
 
   document.getElementById("app").innerHTML = `
