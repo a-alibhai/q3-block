@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<title>Q3 Block</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Q3 Block">
+<link rel="apple-touch-icon" href="icon-180.png">
+<meta name="theme-color" content="#0B0E11">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  :root { --bg:#0B0E11; --card:#12161B; --card2:#0F1318; --line:#1B2129; --line2:#242B34;
+          --tx:#E6E8EA; --tx2:#B8BCC2; --mut:#5A6069; --dim:#3A4048; --a:#5EEAD4; }
+  body.phaseB { --a:#F97316; }
+  body { background:var(--bg); color:var(--tx); font-family:-apple-system,'Space Grotesk',sans-serif;
+         max-width:480px; margin:0 auto; padding:calc(env(safe-area-inset-top) + 14px) 14px 60px;
+         min-height:100vh; }
+  .mono { font-family:'SF Mono',ui-monospace,monospace; }
+  .eyebrow { font-size:10px; letter-spacing:2.5px; color:var(--a); font-weight:700; margin-bottom:5px; }
+  h1 { font-size:30px; font-weight:700; letter-spacing:-1px; display:inline; }
+  .dates { font-size:13px; color:var(--mut); margin-left:8px; }
+  .savebadge { font-size:9px; letter-spacing:1px; color:var(--dim); float:right; padding-top:8px; }
+  .savebadge.ok { color:var(--a); }
+  .strip { display:flex; justify-content:space-between; align-items:center; background:var(--card);
+           border-radius:10px; padding:10px 14px; margin:14px 0; border:1px solid var(--line2); }
+  .strip .lab { font-size:9px; letter-spacing:1.5px; color:var(--mut); margin-bottom:2px; }
+  .strip .cal { font-size:15px; font-weight:700; color:var(--a); }
+  .strip .mac { font-size:12px; color:var(--tx2); }
+  .dots { display:flex; gap:4px; overflow-x:auto; padding-bottom:4px; margin-bottom:14px; }
+  .dots button { min-width:34px; height:34px; border-radius:8px; border:1px solid transparent;
+                 background:#161B21; color:var(--mut); font-size:12px; font-weight:700; }
+  .dots button.on { background:var(--a); color:var(--bg); }
+  .dots button.has { color:var(--a); border-color:var(--a); opacity:.75; }
+  .dots button.has.on { opacity:1; color:var(--bg); }
+  .focus { border-left:3px solid var(--a); border-radius:0 10px 10px 0; padding:10px 14px;
+           margin-bottom:16px; font-size:12px; line-height:1.55; color:var(--tx2);
+           background:linear-gradient(135deg, color-mix(in srgb, var(--a) 8%, transparent), transparent); }
+  .tabs { display:flex; border-bottom:1px solid var(--line); margin-bottom:16px; }
+  .tabs button { flex:1; padding:9px 0; background:none; border:none; color:#4A5058;
+                 font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase;
+                 border-bottom:2px solid transparent; }
+  .tabs button.on { color:var(--tx); border-bottom-color:var(--a); }
+  .card { background:var(--card); border-radius:12px; padding:14px 16px; margin-bottom:11px;
+          border-left:3px solid var(--line2); }
+  .card.done { border-left-color:var(--a); }
+  .card .slab { font-size:10px; letter-spacing:1.5px; color:var(--mut); margin-bottom:6px; font-weight:700; }
+  .card .plan { font-size:13.5px; line-height:1.55; }
+  .card .sub { font-size:11px; color:var(--mut); line-height:1.5; margin-bottom:4px; }
+  input, textarea { width:100%; background:var(--bg); border:1px solid var(--line2); border-radius:8px;
+          color:var(--tx); padding:10px 11px; font-size:16px; font-family:inherit; margin-top:7px; }
+  input:focus, textarea:focus { outline:none; border-color:var(--a); }
+  .liftrow { display:flex; justify-content:space-between; padding:6px 0; font-size:12.5px;
+             border-bottom:1px solid var(--line); }
+  .liftrow:last-child { border-bottom:none; }
+  .liftrow .n { color:var(--tx2); }
+  .liftrow .s { font-size:11px; color:var(--a); white-space:nowrap; margin-left:8px; }
+  details { margin-bottom:10px; }
+  summary { list-style:none; background:var(--card); border-radius:10px; padding:13px 16px;
+            border:1px solid var(--line); display:flex; justify-content:space-between; }
+  summary::-webkit-details-marker { display:none; }
+  .dbody { background:var(--card2); border-radius:0 0 10px 10px; padding:6px 16px 10px;
+           border:1px solid var(--line); border-top:none; }
+  .btn { display:block; width:100%; padding:13px; border-radius:10px; border:1px solid var(--line2);
+         background:var(--card); color:var(--tx); font-size:13px; font-weight:700; letter-spacing:1px;
+         margin-top:10px; }
+  .btn.primary { background:var(--a); color:var(--bg); border-color:var(--a); }
+  .trend { background:var(--card2); border-radius:10px; padding:12px 14px; margin-top:14px; }
+  .trow { display:flex; justify-content:space-between; font-size:12px; padding:3px 0; color:var(--tx2); }
+  .note { font-size:11px; color:var(--mut); font-style:italic; line-height:1.6; margin-top:10px; }
+  .foot { margin-top:28px; padding-top:14px; border-top:1px solid var(--line);
+          display:flex; justify-content:space-between; font-size:9.5px; color:var(--dim); letter-spacing:.5px; }
+  .toast { position:fixed; bottom:24px; left:50%; transform:translateX(-50%); background:var(--a);
+           color:var(--bg); font-size:12px; font-weight:700; padding:10px 18px; border-radius:20px;
+           opacity:0; transition:opacity .25s; pointer-events:none; z-index:9; }
+  .toast.show { opacity:1; }
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div class="toast mono" id="toast"></div>
+<script>
+// ================= DATA =================
+const PHASES = [
+  { id:"A", name:"MAINTAIN & BUILD", weeks:[1,2,3,4,5], cal:"2,300–2,350", mac:"P160 · C255 · F60" },
+  { id:"B", name:"CUT & PERFORM", weeks:[6,7,8,9,10,11], cal:"1,850–1,900", mac:"P160 · C170 · F52" },
+];
+const WEEKS = [
+  { num:1, dates:"Jul 20–26", q:"6× (1 min hard / 90s easy). 10 min WU, 5 min CD. ~28 min.", l:"5K easy, continuous.", e:"20 min easy. Skippable.", c:"HS practice 10 min (3× 5s+ holds) · Floor L-sit 5× max (dead bug primer) · Dips 3×8-10 · Pull-ups 3×6-8 · Pike push-ups 3×8-10", f:"Eat the new calories. Scale jump = water. Log everything as baseline." },
+  { num:2, dates:"Jul 27–Aug 2", q:"5× (2 min tempo / 90s walk). ~30 min.", l:"5.5K continuous.", e:"20 min easy. Skippable.", c:"HS (one 8s hold, film it) · L-sit 5× max · Dips +2.5 if wk1 clean · Pull-ups 3×6-8 · Pike push-ups 3×8-10", f:"Lifts should feel stronger on the carbs. Push them." },
+  { num:3, dates:"Aug 3–9", q:"6× (2 min tempo / 90s walk). ~33 min.", l:"6K continuous.", e:"20 min easy. Skippable.", c:"HS consistency (3+ holds >5s) · L-sit 4× max + straddle-L intro · Dips 3×8-10 · Pull-ups +2.5 if clean · Wall HSPU negatives 3×3-4", f:"Peak Phase A volume. Sleep 7.5+." },
+  { num:4, dates:"Aug 10–16", q:"4× (3 min tempo / 2 min walk). ~32 min.", l:"6.5K continuous.", e:"20 min easy. Skippable.", c:"HS (one 10s hold) · L-sit 5× max (consistent 10s) · Dips 3×8-10 · Pull-ups 3×6-8 · HSPU negatives 3×4-5", f:"Mini-consolidation. Hot flashes should be gone by now." },
+  { num:5, dates:"Aug 17–23", q:"20 min continuous tempo. Hardest Phase A run.", l:"5K TIME TEST. Sub-35 target, sub-33 stretch.", e:"Very easy or skip.", c:"EXIT TESTS: best HS + L-sit on film · Dips/pull-ups Phase A bests · HSPU negatives 3×4-5", f:"Last maintenance week. Thu AM weigh-in = Phase B start weight." },
+  { num:6, dates:"Aug 24–30", q:"5× (3 min tempo / 90s walk). ~34 min.", l:"6.5K continuous.", e:"20 min easy. Skippable.", c:"HS maintain · L-sit/straddle-L 4× max · Dips hold weight · Pull-ups 3×6-8 · HSPU negatives 3×4-5", f:"CUT STARTS: 1,850-1,900. Wk 1 drop is water; real rate ~0.7-0.8 lb/wk." },
+  { num:7, dates:"Aug 31–Sep 6", q:"SUB-30 5K ATTEMPT. 6:00/km. Out at 6:05, negative split.", l:"7K easy.", e:"Very easy or skip.", c:"HS 12s+ · L-sit 12s · Dips 3×8-10 · Pull-ups 3×6-8 · HSPU negatives 3×5", f:"Miss sub-30? Note the time, re-attempt wk 9." },
+  { num:8, dates:"Sep 7–13", q:"6× (2 min hard / 90s walk). Faster than tempo.", l:"7.5K continuous.", e:"20 min easy. Skippable.", c:"HS entrance control · L-sit 4× 10s+ w/ one-leg ext · Dips 3×8-10 · Pull-ups 3×6-8 · FIRST partial wall HSPU 3×3-5", f:"Mid-cut check. Two straight down weeks → 1,950 cal." },
+  { num:9, dates:"Sep 14–20", q:"25 min tempo OR sub-30 re-attempt.", l:"8K ATTEMPT. Any pace. Just finish.", e:"SKIP this week.", c:"HS 15s · L-sit 12-15s · Dips 3×8-10 · Pull-ups 3×6-8 · Partial HSPU 3×4-5", f:"8K week. Carbs night before, easy Tuesday, Sat autoregulates." },
+  { num:10, dates:"Sep 21–27", q:"5× (2 min hard / 90s walk).", l:"8K consolidation, slightly quicker.", e:"20 min easy. Skippable.", c:"HS consistency (3× 10s+) · Straddle-L/L-sit 4× max · Dips 3×8-10 · Pull-ups 3×6-8 · Partial HSPU 3×4-6", f:"Nothing new. Execute. ~155-156 by now." },
+  { num:11, dates:"Sep 28–Oct 4", q:"Easy 20 min shakeout.", l:"FINAL 8K, best effort.", e:"Optional victory jog Sunday.", c:"FINAL TESTS on film: HS 15-20s · L-sit 12-15s · Dips heavy 8 · Pull-ups heavy 6 · Partial HSPU best set", f:"Thu Oct 1 AM: final weigh-in + photos, same light as July. Plan Q4 from data." },
+];
+const LIFTS = {
+  mon:{ t:"Upper A", s:"Chest-focused", i:[["Incline Bench Press","2×6-8","40 ea+"],["Pec Deck","2×8-10","140"],["Cable Lat Raises","2×8-10","5"],["Weighted Pull-ups","2×6-8","+6"],["Machine Rows","2×6-8","140+"],["Face Pulls","2×8-10","12"],["EZ Bar Preacher","2×6-8","17.5 ea"],["Tricep SA Press-down","2×6-8","9"]] },
+  tue:{ t:"Posterior + Abs", s:"Tuesday gym · barbell/DB/cable", i:[["Barbell RDL","3×6-8","45 ea"],["Cable Pull-Through","2-3×10-12","~40"],["Split Squats","2×8-10","45 ea"],["Abductor OR Adductor (alt)","2×8-10","100/90"],["Cable Crunch (progress!)","3×10-12","16+"],["Hanging Leg Raises","2×10-15","BW"]] },
+  thu:{ t:"Upper B", s:"Back-focused", i:[["Wide Grip Lat Pulldown","3×8-10","120"],["SA Row","2×10-12","60"],["DB Bench Press","2×6-8","60 ea"],["Upper Chest Cable Fly","2×10-12","7"],["DB Shoulder Press","2×8-10","40"],["Side Lat Raises","2×10-15",""],["Machine Rear Delt Fly","2×12-15",""],["Overhead Ext","2×6-8","12"],["Rope Hammer Curl","2×6-8","14"]] },
+  fri:{ t:"Hard Legs", s:"Friday gym · tennis AM = moderate", i:[["Squats","3×4-6","55 ea"],["Pendulum Squat","2×8-10","80+"],["Leg Curl","2×10-12","115+"],["SL Leg Extension","2×10-15","55 ea"],["Standing Calf Raises","3×10-15","175"],["Woodchoppers / Pallof","2×10-12",""]] },
+};
+const SESSIONS = [
+  { k:"monU", lab:"Mon · Upper A", lift:"mon" },
+  { k:"monQ", lab:"Mon · Quality Run", get:w=>w.q },
+  { k:"tueL", lab:"Tue · Posterior + Abs", lift:"tue" },
+  { k:"wedL", lab:"Wed · Long Run", get:w=>w.l },
+  { k:"thuU", lab:"Thu · Upper B", lift:"thu" },
+  { k:"thuE", lab:"Thu · Easy Run", get:w=>w.e },
+  { k:"friL", lab:"Fri · Hard Legs", lift:"fri" },
+  { k:"satC", lab:"Sat · Calisthenics", get:w=>w.c },
+];
+const TODAY_MAP = { Mon:["monU","monQ"], Tue:["tueL"], Wed:["wedL"], Thu:["thuU","thuE"], Fri:["friL"], Sat:["satC"], Sun:[] };
+const KEY = "q3block_v1";
+
+// ================= STATE =================
+let logs = {};
+try { logs = JSON.parse(localStorage.getItem(KEY) || "{}"); } catch(e) { logs = {}; }
+function save() { localStorage.setItem(KEY, JSON.stringify(logs)); badge("✓ SAVED"); }
+function badge(t) { const b = document.getElementById("savebadge"); if (b) { b.textContent = t; b.classList.add("ok"); setTimeout(()=>{ b.classList.remove("ok"); b.textContent = countLogged() + " LOGGED"; }, 1400); } }
+
+const phaseFor = n => PHASES.find(p => p.weeks.includes(n));
+function currentWeek() {
+  const start = new Date(2026, 6, 20);
+  const d = Math.floor((Date.now() - start) / 6048e5);
+  return Math.min(Math.max(d + 1, 1), 11);
+}
+let wk = currentWeek();
+let tab = "today";
+const dayName = () => ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"][new Date().getDay()];
+const countLogged = () => SESSIONS.filter(s => logs[wk]?.[s.k]?.a).length;
+
+// ================= HELPERS =================
+const esc = s => (s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/"/g,"&quot;");
+function setField(sk, f, v) { logs[wk] = logs[wk] || {}; logs[wk][sk] = logs[wk][sk] || {}; logs[wk][sk][f] = v; }
+function setWeight(v) { logs[wk] = logs[wk] || {}; logs[wk].weight = v; }
+
+function liftHTML(k) {
+  const L = LIFTS[k];
+  return `<div style="font-size:15px;font-weight:700;margin-bottom:8px">${L.t}</div>
+    <div class="sub">${L.s}</div>` +
+    L.i.map(([n,s,w]) => `<div class="liftrow"><span class="n">${n}</span><span class="s mono">${s}${w?` · ${w}`:""}</span></div>`).join("");
+}
+function fieldsHTML(sk) {
+  const v = logs[wk]?.[sk] || {};
+  return `<input placeholder="Actual (what you did)" value="${esc(v.a)}"
+      oninput="setField('${sk}','a',this.value)" onblur="save();render(false)">
+    <input placeholder="Notes (how it felt)" value="${esc(v.n)}"
+      oninput="setField('${sk}','n',this.value)" onblur="save();render(false)">`;
+}
+function sessionCard(S, showPlan=true) {
+  const done = logs[wk]?.[S.k]?.a ? "done" : "";
+  const plan = S.lift ? liftHTML(S.lift) : `<div class="plan">${S.get(WEEKS[wk-1])}</div>`;
+  return `<div class="card ${done}">
+    <div class="slab">${S.lab.toUpperCase()} ${done ? "· ✓" : ""}</div>
+    ${showPlan ? plan : ""}${fieldsHTML(S.k)}</div>`;
+}
+
+// ================= EXPORT / IMPORT =================
+function exportData() {
+  const payload = JSON.stringify({ exported: new Date().toISOString(), block: "Q3 Jul20-Oct4 2026", logs }, null, 2);
+  // clipboard
+  if (navigator.clipboard) navigator.clipboard.writeText(payload).catch(()=>{});
+  // file download (lands in Files app on iOS → save to iCloud Drive)
+  const blob = new Blob([payload], { type: "application/json" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = `q3block-backup-${new Date().toISOString().slice(0,10)}.json`;
+  a.click();
+  toast("Copied + file saved");
+}
+function importData() {
+  const t = document.getElementById("importbox").value.trim();
+  if (!t) { toast("Paste a backup first"); return; }
+  try {
+    const parsed = JSON.parse(t);
+    logs = parsed.logs || parsed; // accept raw logs too
+    save(); render();
+    toast("Backup restored");
+  } catch(e) { toast("Invalid JSON"); }
+}
+function toast(t) { const el = document.getElementById("toast"); el.textContent = t; el.classList.add("show"); setTimeout(()=>el.classList.remove("show"), 1800); }
+
+// ================= RENDER =================
+function render(scroll=true) {
+  const week = WEEKS[wk-1], phase = phaseFor(wk), today = dayName();
+  document.body.classList.toggle("phaseB", phase.id === "B");
+  const todayKeys = TODAY_MAP[today];
+
+  let body = "";
+  if (tab === "today") {
+    body = `<div class="eyebrow mono">${today.toUpperCase()}</div>`;
+    body += todayKeys.length === 0
+      ? `<div class="card"><div class="plan" style="color:var(--tx2)">Rest day. Fasted walk 30-60 min outside, then genuinely rest.</div></div>`
+      : todayKeys.map(k => sessionCard(SESSIONS.find(s=>s.k===k))).join("");
+  }
+  if (tab === "log") {
+    const weights = Object.entries(logs).filter(([,v])=>v.weight).sort(([a],[b])=>+a-+b);
+    body = `<div class="eyebrow mono">WEEK ${wk} LOG</div>` +
+      SESSIONS.map(S => sessionCard(S, false).replace(fieldsHTML(S.k),
+        `<div class="sub">${S.lift ? LIFTS[S.lift].t : S.get(week)}</div>` + fieldsHTML(S.k))).join("") +
+      `<div class="card" style="border:1px solid var(--line2);border-left-width:1px">
+        <div style="font-size:12px;font-weight:700">Thursday AM Weigh-In (lb)</div>
+        <input inputmode="decimal" placeholder="e.g. 158.2" value="${esc(logs[wk]?.weight)}"
+          oninput="setWeight(this.value)" onblur="save();render(false)"></div>` +
+      (weights.length > 1 ? `<div class="trend"><div class="eyebrow mono" style="color:var(--mut)">WEIGHT TREND</div>` +
+        weights.map(([w,v])=>`<div class="trow mono"><span>WK ${w}</span><span>${esc(v.weight)} lb</span></div>`).join("") + `</div>` : "") +
+      `<button class="btn primary mono" onclick="exportData()">EXPORT BACKUP (COPY + FILE)</button>
+       <textarea id="importbox" rows="2" placeholder="Paste a backup here to restore…"></textarea>
+       <button class="btn mono" onclick="importData()">RESTORE FROM BACKUP</button>
+       <div class="note">Export weekly after your Thursday weigh-in. Save the file to iCloud Drive when the share sheet appears, or paste the copied JSON to Claude to sync into Notion.</div>`;
+  }
+  if (tab === "runs") {
+    body = [["MONDAY PM", week.q, 0], ["WEDNESDAY AM · PRIORITY", week.l, 1], ["THURSDAY PM · SKIPPABLE", week.e, 0]]
+      .map(([d,t,hot]) => `<div class="card" style="${hot?'':'border-left-color:var(--line2)'}${hot?'border-left-color:var(--a)':''}">
+        <div class="slab" style="${hot?'color:var(--a)':''}">${d}</div><div class="plan">${t}</div></div>`).join("") +
+      `<div class="note">Week collapses? Drop Thursday. Never Monday or Wednesday.</div>`;
+  }
+  if (tab === "lifts") {
+    body = [["MON","mon"],["TUE","tue"],["THU","thu"],["FRI","fri"]].map(([d,k]) =>
+      `<details><summary><span><span class="mono" style="font-size:10px;color:var(--a);font-weight:700;margin-right:10px">${d}</span>
+        <span style="font-size:14px;font-weight:600">${LIFTS[k].t}</span></span>
+        <span class="mono" style="font-size:10px;color:var(--dim)">${LIFTS[k].i.length}</span></summary>
+        <div class="dbody"><div class="sub" style="padding:6px 0">${LIFTS[k].s}</div>${
+          LIFTS[k].i.map(([n,s,w])=>`<div class="liftrow"><span class="n">${n}</span><span class="s mono">${s}${w?` · ${w}`:""}</span></div>`).join("")
+        }</div></details>`).join("") +
+      `<div class="note" style="text-align:center">Sat = calisthenics (Today/Log tabs on Saturdays)</div>`;
+  }
+
+  document.getElementById("app").innerHTML = `
+    <div>
+      <span class="savebadge mono" id="savebadge">${countLogged()} LOGGED</span>
+      <div class="eyebrow mono">PHASE ${phase.id} · ${phase.name}</div>
+      <h1>Week ${wk}</h1><span class="dates">${week.dates}</span>
+    </div>
+    <div class="strip">
+      <div><div class="lab mono">CALORIES</div><div class="cal mono">${phase.cal}</div></div>
+      <div style="text-align:right"><div class="lab mono">MACROS</div><div class="mac mono">${phase.mac}</div></div>
+    </div>
+    <div class="dots">${WEEKS.map(w => {
+      const has = logs[w.num] && Object.keys(logs[w.num]).length;
+      return `<button class="mono ${w.num===wk?'on':''} ${has?'has':''}" onclick="wk=${w.num};render()">${w.num}</button>`;
+    }).join("")}</div>
+    <div class="focus">${week.f}</div>
+    <div class="tabs">${["today","log","runs","lifts"].map(t =>
+      `<button class="mono ${tab===t?'on':''}" onclick="tab='${t}';render()">${t}</button>`).join("")}</div>
+    ${body}
+    <div class="foot mono"><span>158.8 → ~155 · JUL 20—OCT 4</span><span>SUB-30 5K · 8K · 15s HS</span></div>`;
+  if (scroll) window.scrollTo(0, 0);
+}
+render();
+if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(()=>{});
+</script>
+</body>
+</html>
